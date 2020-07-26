@@ -1,0 +1,9 @@
+.groupSelect {
+    border: solid;
+    border-width: 1px;
+    border-color: gray;
+    max-width: 80%;
+    min-width: 50%;
+    width: auto;
+    margin-top: 10px;
+}
