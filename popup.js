@@ -8,6 +8,11 @@ let groupSelect = $('groupSelect')
 
 document.addEventListener('DOMContentLoaded', function() {
     showSites() //show list of sites stored in sync on launch
+    chrome.storage.sync.get('currentGroup', function(res) {
+        groupSelect.appendChild(
+            createParagraph('group', res.currentGroup, onclick=undefined, 'groupIndividual')
+        )
+    })
 
     //allows you to add current tab to your tab group
     addCurrentPage.onclick = function(e) {
