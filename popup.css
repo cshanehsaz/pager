@@ -7,3 +7,7 @@
     width: auto;
     margin-top: 10px;
 }
+
+.groupIndividual {
+    cursor: pointer;
+}
