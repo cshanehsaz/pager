@@ -10,9 +10,15 @@
 
 .groupIndividual {
     cursor: pointer;
+    display: inline-block;
 }
 
 .addNewGroupButton {
     width: auto;
     height: auto;
+}
+
+.deleteGroupButton {
+    outline: none;
+    margin-left: 10px;
 }

@@ -3,15 +3,17 @@
   <head>
     <link rel="stylesheet" type="text/css" href="popup.css">
   </head>
-  <body style="width: 300px">
-    <button id="addCurrentPage" style="width: auto; height: auto;">Add Current Page</button>
-    <button id="openTabs" style="width: auto; height: auto;">Open Tabs</button>
-    <button id="options" style="width: auto; height: auto;">Options</button>
+  <body class="popup">
+    <p class="pager"><b>Pager</b></p>
+    <button id="addCurrentPage" class="topButton" style="width: auto; height: auto;">Save Current Site</button>
+    <button id="openTabs" class="topButton" style="width: auto; height: auto;">Open Tabs</button>
+    <button id="options" class="topButton" style="width: auto; height: auto;">Options</button>
+    <p class="currentGroupTitle"><b>Current Group</b></p>
     <div id="groupSelect" class="groupSelect">
         <!-- <p id="group">Group 1:</p> -->
     </div>
     <div>
-        <h4>Saved Sites: </h4>
+        <p class="siteListTitle"><b>Saved Sites </b></p>
     </div>
     <div id="siteList">
     </div>

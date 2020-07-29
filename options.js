@@ -39,6 +39,23 @@ createParagraph = function(id, text, onclick, className) {
     return p
 }
 
+createElement = function(element, id, text, onclick, className) {
+    let e = document.createElement(element);
+    if(id) {
+        e.id = id;
+    }
+    if(text) {
+        e.innerHTML = text;
+    }
+    if(onclick) {
+        e.onclick = onclick;
+    }
+    if(className) {
+        e.className = className;
+    }
+    return e;
+}
+
 groupSelectHelperFunction = function(e) {
     let currentGroup = e.target.innerHTML
     chrome.storage.sync.set({currentGroup: currentGroup}, function() {
@@ -51,7 +68,32 @@ groupSelectHelperFunction = function(e) {
     })
 }
 
+groupDeleteHelperFunction = function(e) { //used for onclick delete buttons on groups page
+    let groupToDelete = e.target.parentElement.firstChild.innerHTML
+    chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
+        let groups = res.groups;
+        delete groups[groupToDelete];
+        chrome.storage.sync.set({ 
+            groups: groups, 
+            currentGroup: groupToDelete===res.currentGroup ? Object.keys(groups)[0] : res.currentGroup
+        }, function() {
+                showGroups(groups);
+        })
+    })
+}
+
+createGroupWithDelete = function(key) {
+    let container = document.createElement('div')
+    container.appendChild(
+        createElement('p', undefined, key, groupSelectHelperFunction, 'groupIndividual')
+    )
+    container.appendChild(createElement('button', undefined, 'delete', groupDeleteHelperFunction, 'deleteGroupButton'))
+    return container;
+}
+
 showGroups = function(groups) {
+    if($('allGroupsContainer')) {groupSelect.removeChild($('allGroupsContainer'))}
+    if($('newGroupContainer')) {groupSelect.removeChild($('newGroupContainer'))}
     //sets up the list of all current groups
     let allGroupsContainer = document.createElement('div')
     allGroupsContainer.id = "allGroupsContainer"
@@ -59,9 +101,7 @@ showGroups = function(groups) {
 
     //iterates over all groups for dropdown
     for(let key of Object.keys(groups)) {
-        allGroupsContainer.appendChild(
-            createParagraph('', key, groupSelectHelperFunction, 'groupIndividual')
-        )
+        allGroupsContainer.appendChild(createGroupWithDelete(key))
     }                 
 
     //everything below setups up the new group button
@@ -89,9 +129,7 @@ showGroups = function(groups) {
         }
         groups[newGroup] = [];
         chrome.storage.sync.set({'groups': groups })
-        allGroupsContainer.appendChild(
-            createParagraph('', newGroup, groupSelectHelperFunction, 'groupIndividual')
-        )
+        allGroupsContainer.appendChild(createGroupWithDelete(newGroup))
     }
 }
 
@@ -121,7 +159,7 @@ groupSelect.onclick = function(e) {
 
 //add current group
 chrome.storage.sync.get('currentGroup', function(res) {
-    let group = createParagraph('group', res.currentGroup, undefined, 'individualGroup')
+    let group = createParagraph('group', res.currentGroup, undefined, 'groupIndividual')
     groupSelect.appendChild(group)
 })
 

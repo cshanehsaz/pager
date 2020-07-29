@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     showSites() //show list of sites stored in sync on launch
     chrome.storage.sync.get('currentGroup', function(res) {
         groupSelect.appendChild(
-            createParagraph('group', res.currentGroup, onclick=undefined, 'groupIndividual')
+            createParagraph('group', res.currentGroup + ' ' + '&#11206', onclick=undefined, 'currentGroup')
         )
     })
 
@@ -66,6 +66,7 @@ showGroups = function(groups) {
     //sets up the list of all current groups
     let allGroupsContainer = document.createElement('div')
     allGroupsContainer.id = "allGroupsContainer"
+    allGroupsContainer.className = "allGroupsContainer"
     groupSelect.appendChild(allGroupsContainer)
 
     //iterates over all groups for dropdown
@@ -78,16 +79,19 @@ showGroups = function(groups) {
     //everything below setups up the new group button
     let newGroupContainer = document.createElement('div');
     newGroupContainer.id = "newGroupContainer"
-    groupSelect.appendChild(newGroupContainer);
+    newGroupContainer.className = "addNewGroupContainer"
+    allGroupsContainer.appendChild(newGroupContainer);
 
     let input = document.createElement('input'); //text field for group name
     input.value = "New Group"
     input.id = "New Group Name"
+    input.className = "addNewGroupInput"
     newGroupContainer.appendChild(input);
     input.onclick = function(e) { e.stopPropagation() }
 
     let button = document.createElement('button'); //submit button to add new group
-    button.innerHTML = "Add New Group"
+    button.innerHTML = "Add"
+    button.className = "addNewGroupButton"
     newGroupContainer.appendChild(button);
 
     button.onclick = function(e) { //handles new groups
@@ -99,9 +103,11 @@ showGroups = function(groups) {
         }
         groups[newGroup] = [];
         chrome.storage.sync.set({'groups': groups })
+        allGroupsContainer.removeChild(newGroupContainer);
         allGroupsContainer.appendChild(
             createParagraph('', newGroup, groupSelectHelperFunction, 'groupIndividual')
         )
+        allGroupsContainer.appendChild(newGroupContainer)
     }
 }
 
@@ -118,8 +124,10 @@ showSites = function() {
         clearSites()
         sites = groups[currentGroup]
         for(let s of sites) {
-            let p = document.createElement('p')
-            p.innerHTML = s
+            let p = createParagraph(undefined, s, undefined, 'siteListIndividual');
+            p.onclick = function(e) {
+                chrome.tabs.create({url: e.target.innerHTML});
+            }
             siteList.appendChild(p)
         }
     })
@@ -145,13 +153,25 @@ createParagraph = function(id, text, onclick, className) {
     return p
 }
 
+createElement = function(element, id, text, onclick, className) {
+    let p = document.createElement(element);
+    p.innerHTML = text;
+    p.id = id;
+    if(onclick !== undefined) {
+        p.onclick = onclick;
+    }
+    if(className !== undefined) {
+        p.className = className
+    }
+    return p
+}
+
 groupSelectHelperFunction = function(e) {
     let currentGroup = e.target.innerHTML
     chrome.storage.sync.set({currentGroup: currentGroup}, function() {
         groupSelect.removeChild($('allGroupsContainer'))
-        groupSelect.removeChild($('newGroupContainer'))
         groupSelect.appendChild(
-            createParagraph('group', currentGroup, onclick=undefined, 'groupIndividual')
+            createParagraph('group', currentGroup + '        ' + '&#11206', onclick=undefined, 'currentGroup')
         )
         showSites();
     })
