@@ -71,9 +71,10 @@ showGroups = function(groups) {
 
     //iterates over all groups for dropdown
     for(let key of Object.keys(groups)) {
-        allGroupsContainer.appendChild(
-            createParagraph('', key, groupSelectHelperFunction, 'groupIndividual')
-        )
+        // allGroupsContainer.appendChild(
+        //     createParagraph('', key, groupSelectHelperFunction, 'groupIndividual')
+        // )
+        allGroupsContainer.appendChild(createGroupWithDelete(key))
     }                 
 
     //everything below setups up the new group button
@@ -83,11 +84,16 @@ showGroups = function(groups) {
     allGroupsContainer.appendChild(newGroupContainer);
 
     let input = document.createElement('input'); //text field for group name
-    input.value = "New Group"
+    input.value = "New Collection"
     input.id = "New Group Name"
     input.className = "addNewGroupInput"
     newGroupContainer.appendChild(input);
-    input.onclick = function(e) { e.stopPropagation() }
+    input.onclick = function(e) { 
+        e.stopPropagation()
+        if(input.value === "New Collection") {
+            input.value = ''
+        } 
+    }
 
     let button = document.createElement('button'); //submit button to add new group
     button.innerHTML = "Add"
@@ -105,9 +111,11 @@ showGroups = function(groups) {
         chrome.storage.sync.set({'groups': groups })
         allGroupsContainer.removeChild(newGroupContainer);
         allGroupsContainer.appendChild(
-            createParagraph('', newGroup, groupSelectHelperFunction, 'groupIndividual')
+            // createParagraph('', newGroup, groupSelectHelperFunction, 'groupIndividual')
+            createGroupWithDelete(newGroup)
         )
         allGroupsContainer.appendChild(newGroupContainer)
+        input.value = "New Collection";
     }
 }
 
@@ -153,19 +161,6 @@ createParagraph = function(id, text, onclick, className) {
     return p
 }
 
-createElement = function(element, id, text, onclick, className) {
-    let p = document.createElement(element);
-    p.innerHTML = text;
-    p.id = id;
-    if(onclick !== undefined) {
-        p.onclick = onclick;
-    }
-    if(className !== undefined) {
-        p.className = className
-    }
-    return p
-}
-
 groupSelectHelperFunction = function(e) {
     let currentGroup = e.target.innerHTML
     chrome.storage.sync.set({currentGroup: currentGroup}, function() {
@@ -175,4 +170,52 @@ groupSelectHelperFunction = function(e) {
         )
         showSites();
     })
+}
+
+createGroupWithDelete = function(key) {
+    let container = document.createElement('div')
+    container.id = key
+    container.className = "groupWithDeleteContainer"
+    container.appendChild(
+        createElement('p', undefined, key, groupSelectHelperFunction, 'groupIndividual')
+    )
+    let deleteIcon = createElement('img', undefined, 'undefined', groupDeleteHelperFunction, 'deleteGroupButton')
+    deleteIcon.src = "images/delete.svg"
+    container.appendChild(deleteIcon)
+    return container;
+}
+
+groupDeleteHelperFunction = function(e) { //used for onclick delete buttons on groups page
+    let groupToDelete = e.target.parentElement.firstChild.innerHTML;
+    chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
+        let groups = res.groups;
+        delete groups[groupToDelete];
+        chrome.storage.sync.set({ 
+            groups: groups, 
+            currentGroup: 
+                groupToDelete === res.currentGroup ? 
+                    Object.keys(groups).length < 1 ? 
+                        "Collection 1" : Object.keys(groups)[0]
+                    :res.currentGroup
+        }, function() {
+            allGroupsContainer.removeChild($(groupToDelete))
+        })
+    })
+}
+
+createElement = function(element, id, text, onclick, className) {
+    let e = document.createElement(element);
+    if(id) {
+        e.id = id;
+    }
+    if(text) {
+        e.innerHTML = text;
+    }
+    if(onclick) {
+        e.onclick = onclick;
+    }
+    if(className) {
+        e.className = className;
+    }
+    return e;
 }

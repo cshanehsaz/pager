@@ -1,8 +1,8 @@
 chrome.runtime.onInstalled.addListener(function() {
     chrome.storage.sync.set({ 
         sites: [], 
-        currentGroup: 'Group 1', 
-        groups: { 'Group 1': [] } 
+        currentGroup: 'Collection 1', 
+        groups: { 'Collection 1': [] } 
     }, function() {});
 
 

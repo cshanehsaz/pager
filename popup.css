@@ -10,11 +10,15 @@
     padding-bottom: 3px;
     cursor: pointer;
     outline: none;
-    margin-right: 1px;
+    margin-right: 3px;
 }
 
 .topButton:hover {
     background-color: gainsboro;
+}
+
+.topButtonContainer {
+    display: inline-flex;
 }
 
 .groupSelect {
@@ -28,7 +32,7 @@
     margin-top: 10px;
     margin-bottom: 5px;
     padding: 0;
-    font-size: 10pt;
+    font-size: 12pt;
     padding-bottom: 2px;
     border-bottom: solid;
     border-color: gray;
@@ -41,7 +45,7 @@
     margin-top: 8px;
     cursor: pointer;
     padding: 1px;
-    font-size: 8pt;
+    font-size: 10pt;
     padding: 3px;
     border: solid;
     border-color: gray;
@@ -50,13 +54,29 @@
 
 .groupIndividual {
     cursor: pointer;
-    font-size: 8pt;
-    margin-bottom: 10px;
+    font-size: 8=10pt;
+    margin: 0;
+}
+
+.groupWithDeleteContainer {
+    display: inline-flex;
+    width: 100%;
     margin-top: 2px;
+    margin-bottom: 10px;
+}
+
+.deleteGroupButton {
+    height: 14px;
+    width: 14px;
+    cursor: pointer;
+    float: right;
+    margin: auto;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .allGroupsContainer {
-    border-radius: 3px;
+    border-radius: 6px;
     padding: 3px;
     border: solid;
     border-color: gray;
@@ -79,8 +99,10 @@
     border-color: gainsboro;
     padding: 2px;
     margin-right: 5px;
-    font-size: 8pt;
+    font-size: 9pt;
+    color: gray;
 }
+
 
 .addNewGroupInput:focus {
     border-radius: 5px;
@@ -88,6 +110,7 @@
     border-width: .75px;
     border-color: gray;
     outline: none;
+    color: black;
 }
 
 .addNewGroupButton, .addNewGroupButton:focus {
@@ -104,6 +127,10 @@
 
 .addNewGroupButton:hover {
     background-color: gainsboro;
+}
+
+.siteList {
+    margin-bottom: 10px;
 }
 
 .siteListTitle {
@@ -141,11 +168,20 @@
 }
 
 .pager {
-    font-size: 18pt;
+    font-size: 16pt;
+    margin: 0;
+    padding-left: 10px;
+    align-self: flex-end;
+}
+
+.pagerTitleContainer {
+    width: 100%;
+    height: auto;
+    display: inline-flex;
     border-bottom: solid;
     border-width: 1px;
     border-color: gainsboro;
     margin-top: 0;
     margin-bottom: 15px;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
 }

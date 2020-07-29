@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <link rel="stylesheet" type="text/css" href="popup.css">
-  </head>
-  <body class="popup">
-    <p class="pager"><b>Pager</b></p>
-    <button id="addCurrentPage" class="topButton" style="width: auto; height: auto;">Save Current Site</button>
-    <button id="openTabs" class="topButton" style="width: auto; height: auto;">Open Tabs</button>
-    <button id="options" class="topButton" style="width: auto; height: auto;">Options</button>
-    <p class="currentGroupTitle"><b>Current Group</b></p>
+</head>
+<body class="popup">
+    <div class="pagerTitleContainer">
+        <img src="images/PagerSVG.svg" height="48px" width="48px"/>
+        <p class="pager">Pager</p>
+    </div>
+    <div class="topButtonContainer">
+        <button id="addCurrentPage" class="topButton" style="width: auto; height: auto;">Save Current Site</button>
+        <button id="openTabs" class="topButton" style="width: auto; height: auto;">Open Sites</button>
+        <button id="options" class="topButton" style="width: auto; height: auto;">Options</button>
+    </div>
+    <p class="currentGroupTitle"><b>Collection</b></p>
     <div id="groupSelect" class="groupSelect">
-        <!-- <p id="group">Group 1:</p> -->
     </div>
     <div>
         <p class="siteListTitle"><b>Saved Sites </b></p>
     </div>
-    <div id="siteList">
+    <div id="siteList" class="siteList">
     </div>
     <script src="popup.js"></script>
-  </body>
+</body>
 </html>
