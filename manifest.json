@@ -1,8 +1,8 @@
 {
     "name": "Pager",
-    "version": "1.0",
-    "description": "Build an Extension!",
-    "permissions": ["activeTab", "declarativeContent", "storage", "tabs"],
+    "version": "0.0.0.1",
+    "description": "Cleaner, simpler, easier bookmarks! Access your saved collections of websites with just one click.",
+    "permissions": ["storage", "tabs"],
     "options_page": "options.html",
     "background": {
         "scripts": ["background.js"],

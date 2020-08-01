@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
                 let groups = res.groups;
                 let currentGroup = res.currentGroup;
-                groups[currentGroup].push(tab[0].url);
+                groups[currentGroup].push({link: tab[0].url, alias: tab[0].url});
                 chrome.storage.sync.set({ 'groups': groups }, function() {
                     showSites();
                 });
@@ -35,17 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let currentGroup = res.currentGroup;
             sites = groups[currentGroup];
             for(let i=0; i<sites.length; i++) {
-                let site = {url: sites[i]}
+                let site = {url: sites[i].link}
                 chrome.tabs.create(site);
             }
             showSites();
-        })
-    }
-
-    //opens extension options menu
-    options.onclick = function(e) {
-        chrome.runtime.openOptionsPage(function(){
-            return
         })
     }
 
@@ -70,10 +63,7 @@ showGroups = function(groups) {
     groupSelect.appendChild(allGroupsContainer)
 
     //iterates over all groups for dropdown
-    for(let key of Object.keys(groups)) {
-        // allGroupsContainer.appendChild(
-        //     createParagraph('', key, groupSelectHelperFunction, 'groupIndividual')
-        // )
+    for(let key of Object.keys(groups).sort()) {
         allGroupsContainer.appendChild(createGroupWithDelete(key))
     }                 
 
@@ -94,6 +84,12 @@ showGroups = function(groups) {
             input.value = ''
         } 
     }
+    input.addEventListener("keyup", function(event) { //on enter will submit changes
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          button.click();
+        }
+    })
 
     let button = document.createElement('button'); //submit button to add new group
     button.innerHTML = "Add"
@@ -132,11 +128,39 @@ showSites = function() {
         clearSites()
         sites = groups[currentGroup]
         for(let s of sites) {
-            let p = createParagraph(undefined, s, undefined, 'siteListIndividual');
+            //creates div
+            let d = document.createElement('div')
+            d.className = "siteListIndividualContainer"
+            d.link = s.link;
+
+            //creates link name
+            let alias = s.alias;
+            if(alias.startsWith('https://')) { alias = alias.slice(8) }
+            alias = alias.length < 20 ? alias : alias.slice(0, 19) + '...';
+            d.alias = alias;
+
+            let favicon = document.createElement('img');
+            favicon.src = 'http://www.google.com/s2/favicons?domain=' + isolateSite(d.link);
+            favicon.className = 'favicon'
+
+            let p = createParagraph(undefined, alias, undefined, 'siteListIndividual');
             p.onclick = function(e) {
-                chrome.tabs.create({url: e.target.innerHTML});
+                chrome.tabs.create({url: e.target.parentElement.link});
             }
-            siteList.appendChild(p)
+
+            //creates rename
+            let edit = createParagraph(undefined, 'rename', siteEditHelperFunction, 'siteListEdit')
+
+            //creates delete icon
+            let deleteIcon = createElement('img', undefined, 'undefined', siteDeleteHelperFunction, 'deleteGroupButton')
+            deleteIcon.src = "images/delete.svg"
+            deleteIcon.link = s.link;
+
+            d.appendChild(favicon);
+            d.appendChild(p)
+            d.appendChild(edit)
+            d.appendChild(deleteIcon)
+            siteList.appendChild(d)
         }
     })
 }
@@ -146,6 +170,116 @@ clearSites = function() {
     while(siteList.firstChild) {
         siteList.removeChild(siteList.firstChild);
     }
+}
+
+siteDeleteHelperFunction = function(e) {
+    chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
+        let groups = res.groups;
+        let sites = res.groups[res.currentGroup];
+        let siteToRemove = e.target.link;
+        for (let i = 0; i<sites.length; i++) {
+            if(sites[i].link === siteToRemove) {
+                sites.splice(i, 1)
+            }
+        }
+        groups[res.currentGroup] = sites;
+        chrome.storage.sync.set({ groups: groups }, () => showSites())
+    })
+}
+
+siteEditHelperFunction = function(e) {
+    let parent = e.target.parentElement;
+    let alias = parent.alias;
+    while(parent.childNodes.length > 1) {parent.removeChild(parent.lastChild)}
+
+    let editField = document.createElement('input');
+    editField.value = alias;
+    editField.className = 'siteListEditField';
+    parent.appendChild(editField);
+    editField.addEventListener("keyup", function(event) { //on enter will submit changes
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          setName.click();
+        }
+    })
+
+    let setName = createParagraph(undefined, 'Save', siteRenameHelperFunction, 'siteListEdit')
+    parent.appendChild(setName)
+
+    editField.focus();
+    editField.select();
+}
+
+siteRenameHelperFunction = function(e) {
+    let parent = e.target.parentElement;
+    let link = parent.link;
+    let alias = parent.childNodes[1].value;
+
+    chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
+        let groups = res.groups;
+        let sites = groups[res.currentGroup];
+        for(let s of sites) {
+            if(s.link === link) {
+                s.alias = alias;
+            }
+        }
+        groups[res.currentGroup] = sites;
+        chrome.storage.sync.set({groups: groups}, function() {
+            showSites();
+        })
+    })
+}
+
+groupEditHelperFunction = function(e) {
+    let parent = e.target.parentElement;
+    parent.oldName = parent.firstChild.innerHTML;
+    while(parent.firstChild) {parent.removeChild(parent.firstChild)}
+
+    let editField = document.createElement('input');
+    editField.value = parent.oldName;
+    editField.className = 'groupListEditField';
+    parent.appendChild(editField);
+    editField.addEventListener("keyup", function(event) {
+        //on enter will submit changes
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          setName.click();
+        }
+    })
+
+    let setName = createParagraph(undefined, 'save', groupRenameHelperFunction, 'siteListEdit')
+    parent.appendChild(setName)
+
+    editField.focus();
+    editField.select();
+}
+
+groupRenameHelperFunction = function(e) {
+    let parent = e.target.parentElement;
+    let oldName = parent.oldName;
+    let newName = parent.firstChild.value;
+
+    chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
+        let groups = res.groups;
+        let currentGroup = res.currentGroup;
+
+        if(Object.keys(groups).indexOf(newName) > -1) { //don't update info if name exists already
+            groupSelect.removeChild($('allGroupsContainer'));
+            showGroups(groups);
+            return;
+        }
+
+        //if there's a new alias made
+        groups[newName] = groups[oldName];
+        delete groups[oldName];
+        chrome.storage.sync.set({
+            groups: groups,
+            currentGroup: oldName === currentGroup ? newName : currentGroup
+        }, function() {
+            groupSelect.removeChild($('allGroupsContainer'))
+            showGroups(groups);
+        })
+    })
 }
 
 createParagraph = function(id, text, onclick, className) {
@@ -177,8 +311,12 @@ createGroupWithDelete = function(key) {
     container.id = key
     container.className = "groupWithDeleteContainer"
     container.appendChild(
-        createElement('p', undefined, key, groupSelectHelperFunction, 'groupIndividual')
+        createElement('p', undefined, key.length < 20 ? key : key.slice(0, 18) + '...', groupSelectHelperFunction, 'groupIndividual')
     )
+
+    let renameButton = createElement('p', undefined, 'rename', groupEditHelperFunction, 'siteListEdit')
+    container.appendChild(renameButton)
+
     let deleteIcon = createElement('img', undefined, 'undefined', groupDeleteHelperFunction, 'deleteGroupButton')
     deleteIcon.src = "images/delete.svg"
     container.appendChild(deleteIcon)
@@ -186,7 +324,7 @@ createGroupWithDelete = function(key) {
 }
 
 groupDeleteHelperFunction = function(e) { //used for onclick delete buttons on groups page
-    let groupToDelete = e.target.parentElement.firstChild.innerHTML;
+    let groupToDelete = e.target.parentElement.id;
     chrome.storage.sync.get(['groups', 'currentGroup'], function(res) {
         let groups = res.groups;
         delete groups[groupToDelete];
@@ -218,4 +356,17 @@ createElement = function(element, id, text, onclick, className) {
         e.className = className;
     }
     return e;
+}
+
+isolateSite = function(link) {
+    if(link.startsWith('https://')) {
+        link = link.slice(8);
+    }
+    if(link.startsWith('http://')) {
+        link = link.slice(7);
+    }
+    if(link.indexOf('/' !== -1)) {
+        link = link.slice(0, link.indexOf('/'));
+    }
+    return link;
 }
