@@ -125,8 +125,8 @@ showSites = function() {
             return
         }
 
-        clearSites()
         sites = groups[currentGroup]
+        let container = document.createElement('div')
         for(let s of sites) {
             //creates div
             let d = document.createElement('div')
@@ -160,8 +160,10 @@ showSites = function() {
             d.appendChild(p)
             d.appendChild(edit)
             d.appendChild(deleteIcon)
-            siteList.appendChild(d)
+            container.appendChild(d)
         }
+        clearSites()
+        siteList.appendChild(container)
     })
 }
 

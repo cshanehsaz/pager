@@ -1,19 +1,12 @@
 chrome.runtime.onInstalled.addListener(function() {
-    chrome.storage.sync.set({ 
-        sites: [], 
-        currentGroup: 'Collection 1', 
-        groups: { 'Collection 1': [] } 
-    }, function() {});
-
-
-
-    // chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    //     chrome.declarativeContent.onPageChanged.addRules([{
-    //       conditions: [new chrome.declarativeContent.PageStateMatcher({
-    //         pageUrl: {hostEquals: 'developer.chrome.com'},
-    //       })
-    //       ],
-    //           actions: [new chrome.declarativeContent.ShowPageAction()]
-    //     }]);
-    // });
+    chrome.storage.sync.get(['groups'], function(res) {
+        if(res.groups === undefined) {
+            chrome.storage.sync.set({ 
+                sites: [], 
+                currentGroup: 'Click me!', 
+                groups: { 'Click me!': [{link: 'https://google.com', alias: 'google.com'}], "Another Collection": [] } 
+            }, function() {});
+            return ('new instance created');
+        }
+    })
 });

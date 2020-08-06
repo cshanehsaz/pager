@@ -42,7 +42,7 @@
 
 .currentGroup {
     border-radius: 6px;
-    margin-top: 8px;
+    margin-top: 0px;
     cursor: pointer;
     padding: 1px;
     font-size: 10pt;

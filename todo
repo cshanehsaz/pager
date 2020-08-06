@@ -1,6 +1,10 @@
 To Do:
 - move common functions to utils
 
+- Bug Fixes:
+    - if you have 2 of the same site, renaming one renames them both
+    - if you have 2+ of the same site, deleting one deletes 2 sometimes
+
 Completed:
 - add delete buttons for each group and site
 - make it look prettier

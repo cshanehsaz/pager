@@ -1,5 +1,5 @@
 {
-    "name": "Pager",
+    "name": "Pager - Better Bookmarks",
     "version": "0.0.0.1",
     "description": "Cleaner, simpler, easier bookmarks! Access your saved collections of websites with just one click.",
     "permissions": ["storage", "tabs"],
@@ -11,17 +11,17 @@
     "browser_action": {
         "default_popup": "popup.html",
         "default_icon": {
-          "16": "images/pager_16.png",
-          "32": "images/pager_32.png",
-          "48": "images/pager_48.png",
-          "128": "images/pager_128.png"
+          "16": "images/pager2_16.png",
+          "32": "images/pager2_32.png",
+          "48": "images/pager2_48.png",
+          "128": "images/pager2_128.png"
         }
     },
     "icons": {
-        "16": "images/Pager_16.png",
-        "32": "images/Pager_32.png",
-        "48": "images/Pager_48.png",
-        "128": "images/Pager_128.png"
+        "16": "images/Pager2_16.png",
+        "32": "images/Pager2_32.png",
+        "48": "images/Pager2_48.png",
+        "128": "images/Pager2_128.png"
     },
     "manifest_version": 2
 }

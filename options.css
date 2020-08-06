@@ -1,24 +1,20 @@
-.groupSelect {
-    border: solid;
+.optionsWrapper {
+    margin: 100px;
+    margin-top: 50px;
+    border-right: solid;
     border-width: 1px;
-    border-color: gray;
-    max-width: 80%;
-    min-width: 50%;
-    width: auto;
+    border-color: gainsboro;
+    padding: 20px;
+    width: 40%;
+}
+
+.optionsTitle {
+    font-size: 24pt;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.groupIndividual {
-    cursor: pointer;
-    display: inline-block;
+.optionsBody {
+    font-size: 12pt;
 }
 
-.addNewGroupButton {
-    width: auto;
-    height: auto;
-}
-
-.deleteGroupButton {
-    outline: none;
-    margin-left: 10px;
-}
